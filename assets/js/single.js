@@ -1,6 +1,6 @@
 //------------------------------------Variables
 var issueContainerEl = document.querySelector("#issues-container");
-
+var limitWarningEl = document.getElementById("limit-warning");
 
 //-------------------------------------Functions
 function getRepoIssues(repo) {
@@ -12,7 +12,11 @@ function getRepoIssues(repo) {
         if(response.ok) {
             response.json().then(function(data) {
                 displayIssues(data);
-                console.log(data);
+
+                //check if api has paginated issues
+                if (response.headers.get("Link")) {
+                    displayWarning(repo);
+                }
             });
         } else {
             alert("Error: " + response.statusText);
@@ -63,8 +67,23 @@ function displayIssues(issuesJSON) {
         issueContainerEl.appendChild(issueEl);
     }
 
+    
+
 }
 
+function displayWarning(repo) {
+    //add text to warning container
+    limitWarningEl.textContent="To see more than 30 issues, visit ";
+
+    var linkEl = document.createElement("a");
+    linkEl.textContent = "See more issues on GitHub.com";
+    linkEl.setAttribute("href","https://github.com/"+repo+"/issues");
+    linkEl.setAttribute("target","_blank");
+
+    limitWarningEl.appendChild(linkEl);
+}
 //--------------------------------------Calls
-getRepoIssues("apple/ccs-caldavtester");
-// getRepoIssues("rolanduwxcc/ch1-accessibility");
+// getRepoIssues("apple/ccs-caldavtester");
+// getRepoIssues("facebook/react");
+getRepoIssues("expressjs/express");
+// gitgetRepoIssues("rolanduwxcc/ch1-accessibility");
