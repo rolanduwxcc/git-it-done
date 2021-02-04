@@ -1,8 +1,28 @@
 //------------------------------------Variables
 var issueContainerEl = document.querySelector("#issues-container");
 var limitWarningEl = document.getElementById("limit-warning");
+var repoNameEl = document.querySelector("#repo-name");
+var buttonBackEl = document.getElementById("btn-back");
+
 
 //-------------------------------------Functions
+function getRepoName() {
+    let queryString = document.location.search;
+    let repoName = queryString.split("=")[1];
+    
+    if (repoName) {
+        getRepoIssues(repoName);
+        repoNameEl.textContent=repoName;
+    }
+    else {
+        document.location.replace("./index.html");
+    }
+
+    let urlBackButton = buttonBackEl.getAttribute("href")+"?user="+repoName.split("/")[0];
+    buttonBackEl.setAttribute("href",urlBackButton);
+    console.log(urlBackButton);
+}
+
 function getRepoIssues(repo) {
     var apiUrl = "https://api.github.com/repos/" + repo + "/issues?direction=dec";
     console.log(repo);
@@ -19,7 +39,9 @@ function getRepoIssues(repo) {
                 }
             });
         } else {
-            alert("Error: " + response.statusText);
+            // alert("Error: " + response.statusText);
+            document.location.replace("./index.html");
+
         }
     })
     .catch(function(error) {
@@ -85,5 +107,7 @@ function displayWarning(repo) {
 //--------------------------------------Calls
 // getRepoIssues("apple/ccs-caldavtester");
 // getRepoIssues("facebook/react");
-getRepoIssues("expressjs/express");
+// getRepoIssues("expressjs/express");
 // gitgetRepoIssues("rolanduwxcc/ch1-accessibility");
+// getRepoIssues(repo);
+getRepoName();
